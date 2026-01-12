@@ -20,7 +20,6 @@
       url = "github:draganm/gorefresh/v0.0.4";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        blueprint.inputs.systems.follows = "systems";
       };
     };
   };
@@ -35,34 +34,34 @@
       ...
     }@inputs:
     let
-      eachSystem =
-        nixpkgs.lib.genAttrs (import systems) (
-          system:
-          let pkgs = import nixpkgs {
+      eachSystem = nixpkgs.lib.genAttrs (import systems) (
+        system:
+        let
+          pkgs = import nixpkgs {
             inherit system;
             config = {
               allowUnfree = true;
             };
           };
-          in
-          {
-            default = pkgs.callPackage ./package.nix { };
-            devShell = pkgs.mkShell {
-              shellHook = ''
-                # Set here the env vars you want to be available in the shell
-              '';
-              hardeningDisable = [ "all" ];
+        in
+        {
+          default = pkgs.callPackage ./package.nix { };
+          devShell = pkgs.mkShell {
+            shellHook = ''
+              # Set here the env vars you want to be available in the shell
+            '';
+            hardeningDisable = [ "all" ];
 
-              packages = with pkgs; [
-                go
-                shellcheck
-                (templ.packages.${system}.default)
-                (gorefresh.packages.${system}.default)
-                overmind
-              ];
-            };
-          }
-        );
+            packages = with pkgs; [
+              go
+              shellcheck
+              (templ.packages.${system}.default)
+              (gorefresh.packages.${system}.default)
+              overmind
+            ];
+          };
+        }
+      );
 
     in
     {
