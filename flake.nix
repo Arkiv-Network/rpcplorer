@@ -20,6 +20,7 @@
       url = "github:draganm/gorefresh/v0.0.4";
       inputs = {
         nixpkgs.follows = "nixpkgs";
+        blueprint.inputs.systems.follows = "systems";
       };
     };
   };
